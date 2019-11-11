@@ -71,6 +71,7 @@ rpmbuild -ba ticrypt-spank.spec
 * Install generated RPMs
 ```
 yum install $HOME/rpmbuild/RPMS/x86_64/ticrypt-spank-<major>-<minor>.x86_64.rpm
+```
 
 ### Configuration
 
