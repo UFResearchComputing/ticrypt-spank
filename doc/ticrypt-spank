@@ -1,0 +1,51 @@
+.\" Manpage for ticrypt-spank.
+.\" Contact whowell@rc.ufl.edu.
+.TH man 8 "11 Nov 2019" "1.0" "ticrypt-spank man page"
+.SH NAME
+ticrypt-spank \- Slurm spank plugin for ticrypt node reconfiguration
+.SH SYNOPSIS
+
+  Install the ticrypt.so Spank plugin
+
+  Include in plugstack.conf for Slurm
+
+  Configure /etc/ticrypt-spank.conf with convert and revert commands
+
+  Run a Slurm job with --ticrypt
+
+.SH DESCRIPTION
+ticrypt-spank provides ticrypt.so spank plugin for Slurm. This plugin provides the --ticrypt Slurm option and mechanism to call commands for converting a standard compute node to a ticrypt vm controller. Actual conversion is site specific and requires a site module program to be deployed and referenced in ticrypt-spank.conf.
+
+In the event of failed conversion, the node is marked to DRAIN in Slurm and an attempt is made to requeue the calling job. The ability to requeue a job is dependent on the jobs options and site configuration, namely Slurm's JobRequeue option. In the case where revert fails during job task end, the node is also set to DRAIN but the job is not requeued.
+
+.SH OPTIONS
+Provided Slurm Options:
+  --ticrypt             request a ticrypt node re-configuration for job
+
+Configuration File: /etc/ticrypt-spank.conf 
+  convert:    "/some/command/to_convert --options"
+  revert:     "/some/command/to_revert  --options"
+  drain:      boolean indicating if nodes should be drained on a convert or revert failure
+  requeue:    boolean indicating if spank should try to requeue a job where conversion failed
+  partitions: array of allowed partitions for ticrypt jobs
+  features:   array of required features ticrypt jobs must request
+  accounts:   array of accounts allowed to utilize plugin
+
+.SH FILES
+  /opt/slurm/lib64/slurm/ticrypt.so  - spank plugin
+  /etc/ticrypt-spank.conf            - plugin configuration file
+  /usr/local/share/man/ticrypt-spank - man page
+
+.SH SEE ALSO
+  https://slurm.schedmd.com/spank.html
+  https://slurm.schedmd.com/slurm.conf.html
+  https://terainsights.com/
+  http://hyperrealm.github.io/libconfig/
+
+.SH BUGS
+Report bugs at https://github.com/UFResearchComputing/ticrypt-spank/issues
+
+  - future config options not yet implemented
+
+.SH AUTHOR
+William Howell (whowell@rc.ufl.edu)
