@@ -5,7 +5,7 @@ Summary:	Ticrypt spank plugin for Slurm
 
 License:    GPLv3	
 URL:		https://github.com/UFResearchComputing/ticrypt-spank
-Source0:	https://github.com/UFResearchComputing/ticrypt-spank/archive/%{version}-%{release}.tar.gz
+Source0:	https://github.com/UFResearchComputing/ticrypt-spank/archive/ticrypt-spank-%{version}-%{release}.tar.gz
 
 BuildRequires:	gcc slurm-devel libconfig
 Requires:	slurm

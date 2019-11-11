@@ -39,13 +39,13 @@ make install DESTDIR=/opt/slurm
 * Download desired release to SOURCES
 ```
 cd $HOME/rpmbuild/SOURCES
-wget https://github.com/UFResearchComputing/ticrypt-spank/archive/<major>-<minor>.tar.gz
+wget https://github.com/UFResearchComputing/ticrypt-spank/archive/ticrypt-spank-<major>-<minor>.tar.gz
 ```
 
 * Depending on the git system downloaded from, it may be necessary to extract the source, rename, and compress for example
 ```
 cd $HOME/rpmbuild/SOURCES
-tar -xf <major>-<minor>.tar.gz
+tar -xf ticrypt-spank-<major>-<minor>.tar.gz
 mv ticrypt-spank-<major>-<minor> ticrypt-spank-<major>
 tar -czf ticrypt-spank-v<major>.<minor>.tar.gz ticrypt-spank-<major>
 ```
@@ -53,7 +53,7 @@ tar -czf ticrypt-spank-v<major>.<minor>.tar.gz ticrypt-spank-<major>
 * Copy the specfile from the source to SPECS
 ```
 cd $HOME/rpmbuild/SOURCES
-tar -xf <major>-<minor>.tar.gz   #depend on if renamed above
+tar -xf ticrypt-spank-<major>-<minor>.tar.gz   #depend on if renamed above
 cp ticrypt-spank-<major>/ticrypt-spank.spec $HOME/rpmbuild/SPECS
 ```
 
