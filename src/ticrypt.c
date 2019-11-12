@@ -446,6 +446,43 @@ int slurm_spank_init(spank_t sp, int ac, char **av) {
 
 /* ************************************************************************** */
 /*                                                                            */
+/*                             job_prolog                                     */
+/*                                                                            */
+/* ************************************************************************** */
+int slurm_spank_job_prolog(spank_t sp, int ac, char **av) {
+  tlog("starting job_prolog",DEBUG);
+
+  /* Define logging variables */
+  char message[BUFLEN] = "";
+
+  /* Define counts to check against */
+  uint32_t n_tasks = 2;
+  uint32_t n_nodes = 1;
+
+  /* Get task and node counts from environment */
+  if ( spank_get_item(sp,S_JOB_NNODES,&n_nodes) != ESPANK_SUCCESS ) {
+    tlog("could not determine number of nodes in job",ERROR);
+    return FAIL;
+  }
+
+  if ( spank_get_item(sp,S_JOB_TOTAL_TASK_COUNT,&n_nodes) != ESPANK_SUCCESS ) {
+    tlog("could not determine number of tasks in job",ERROR);
+    return FAIL;
+  }
+
+  /* Verify total task count does not exceed node count */
+  /* https://github.com/UFResearchComputing/ticrypt-spank/issues/1 */
+  if ( n_tasks > n_nodes ) {
+    tlog("ticrypt jobs require a single task per node",ERROR);
+    return FAIL;
+  } 
+
+
+  return PASS;
+}
+
+/* ************************************************************************** */
+/*                                                                            */
 /*                         task_init_privileged                               */
 /*                                                                            */
 /* ************************************************************************** */
