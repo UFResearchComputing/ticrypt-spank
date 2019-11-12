@@ -452,9 +452,6 @@ int slurm_spank_init(spank_t sp, int ac, char **av) {
 int slurm_spank_job_prolog(spank_t sp, int ac, char **av) {
   tlog("starting job_prolog",DEBUG);
 
-  /* Define logging variables */
-  char message[BUFLEN] = "";
-
   /* Define counts to check against */
   uint32_t n_tasks = 2;
   uint32_t n_nodes = 1;
