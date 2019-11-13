@@ -1,14 +1,14 @@
 Name:	ticrypt-spank	
 Version:	1
-Release:	0
+Release:	1
 Summary:	Ticrypt spank plugin for Slurm
 
 License:    GPLv3	
 URL:		https://github.com/UFResearchComputing/ticrypt-spank
 Source0:	https://github.com/UFResearchComputing/ticrypt-spank/archive/ticrypt-spank-%{version}-%{release}.tar.gz
 
-BuildRequires:	gcc slurm-devel libconfig
-Requires:	slurm
+BuildRequires:	gcc slurm-devel libconfig-devel
+Requires:	slurm libconfig
 
 %description
 Provides a Slurm Spank plugin to allow node reconfiguration for scheduling Ticrypt VM Hosts.
@@ -37,7 +37,9 @@ rm -rf %{buildroot}
 %doc
 
 %changelog
-* Sat Nov 11 2019 William Howell <whowell@rc.ufl.edu> - 1.0
+* Wed Nov 13 2019 William Howell <whowell@rc.ufl.edu> - 1.1
+- Version 1.1 release
+* Sun Nov 10 2019 William Howell <whowell@rc.ufl.edu> - 1.0
 - Version 1.0 release
 * Sat Nov 9 2019 William Howell <whowell@rc.ufl.edu> - 0.3
 - Add resume state on successful cleanup
