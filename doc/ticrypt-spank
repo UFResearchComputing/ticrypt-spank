@@ -1,6 +1,6 @@
 .\" Manpage for ticrypt-spank.
 .\" Contact whowell@rc.ufl.edu.
-.TH man 8 "11 Nov 2019" "1.0" "ticrypt-spank man page"
+.TH man 8 "13 Nov 2019" "1.1" "ticrypt-spank man page"
 .SH NAME
 ticrypt-spank \- Slurm spank plugin for ticrypt node reconfiguration
 .SH SYNOPSIS
