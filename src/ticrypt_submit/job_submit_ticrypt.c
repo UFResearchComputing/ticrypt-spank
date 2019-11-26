@@ -504,9 +504,52 @@ extern int job_submit(struct job_descriptor *job_desc, uint32_t submit_uid,
     } 
   }
 
+  /* Verify single task per node */
+  sprintf(message,"(%s) verifying single task per node",
+                  plugin_type);
+  debug(message);
+  if ( job_desc -> ntasks_per_node != 1 ) {
+    sprintf(message,"(%s) fixing job request with %d tasks per node to 1",
+                    plugin_type,
+                    job_desc -> ntasks_per_node);
+    info(message);
+    job_desc -> ntasks_per_node = 1;
+  }
 
+  /* Set min and max nodes to match ntasks */
+  /*   we actually want to find the most tasks the request was made for
+   *   plausibly, then ensure we force ntasks == min_nodes == max_nodes 
+  */     
+  sprintf(message,"(%s) verifying request has a node for each task",
+                  plugin_type);
+  debug(message);
+  int set_max = 1;
+
+  if ( (int)(job_desc->num_tasks) > set_max ) {
+    set_max = (int)(job_desc->num_tasks);
+  }
+  if ( (int)(job_desc->min_nodes) > set_max ) {
+    set_max = (int)(job_desc->min_nodes);
+  }
+  if ( (int)(job_desc->max_nodes) > set_max ) {
+    set_max = (int)(job_desc->max_nodes);
+  }
+  sprintf(message,"(%s) setting num_tasks,min_nodes,and max_nodes to %d",
+                  plugin_type,
+                  set_max);
+  debug(message);
+  job_desc -> num_tasks = set_max;
+  job_desc -> min_nodes = set_max;
+  job_desc -> max_nodes = set_max;
+
+
+
+  /* Cleanup and clean return */
   ticrypt_settings_free(&settings);
   return SLURM_SUCCESS;
+
+
+
 }
 
 /* ************************************************************************** */
