@@ -41,6 +41,7 @@
 #include <libconfig.h>
 #include <slurm/slurm.h>
 #include <slurm/slurm_errno.h>
+#include "../../slurm/src/common/slurm_xlator.h"
 #include "../../slurm/src/slurmctld/slurmctld.h"
 
 /* ************************************************************************** */
@@ -65,6 +66,7 @@ const uint32_t plugin_version   = SLURM_VERSION_NUMBER;
 #define FALSE    1
 /* Configuration Defaults */
 #define DEFAULT_CONFIG "/etc/ticrypt-spank.conf"
+#define OPTION_CHECK "_SLURM_SPANK_OPTION_ticrypt_ticrypt=(null)"
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -104,7 +106,21 @@ int ticrypt_settings_free(ticrypt_settings_t *settings) {
   }
   /* accounts setting */
   if ( settings -> accounts != NULL ) {
+    for ( i=0; i<settings -> n_accounts; i++ ) {
+      if ( (settings -> accounts)[i] != NULL ) {
+        free((settings -> accounts[i]));
+      }
+    }
     free(settings -> accounts);
+  }
+  /* features setting */
+  if ( settings -> features != NULL ) {
+    for ( i=0; i<settings -> n_features; i++ ) {
+      if ( (settings -> features)[i] != NULL ) {
+        free((settings -> features[i]));
+      }
+    }
+    free(settings -> features);
   }
 
   return SLURM_SUCCESS;
@@ -116,6 +132,7 @@ int ticrypt_settings_free(ticrypt_settings_t *settings) {
 /* - parse config into ticrypt_settings_t                 */
 /* ****************************************************** */
 int ticrypt_settings_init(ticrypt_settings_t *settings) {
+  int index = 0;
   char message[BUFLEN];
   settings -> config_file = NULL;
   settings -> allow_drain = TRUE;
@@ -190,7 +207,7 @@ int ticrypt_settings_init(ticrypt_settings_t *settings) {
   sprintf(message,"(%s) checking partition settings", plugin_type);
   debug(message);
   config_setting_t *partitions_opt;
-  int index = 0;
+  index = 0;
   partitions_opt = config_lookup(&config,"partitions");
   char add_partition[BUFLEN] = "";
   if ( partitions_opt != NULL ) {   
@@ -218,101 +235,72 @@ int ticrypt_settings_init(ticrypt_settings_t *settings) {
       settings -> n_partitions++;
     }
   }
-  
-  /* check config for required 'features' and verify against job request */
-  //int n_job_features = 0;
-  //char job_features[40][BUFLEN];
-  //char *features = (job_spec -> job_array)[0].features;
-  //if ( features != NULL ) {
-  //  char *ftoken;
-  //  ftoken = strtok(features,"&");
-  //  char feature[256];
-  //  while ( ftoken != NULL ) {
-  //    sscanf(ftoken,"%s",feature);
-  //    sprintf(job_features[n_job_features],"%s",feature);
-  //    n_job_features++;
-  //    ftoken = strtok(NULL,"&");
-  //  }
-  //}
-  //config_setting_t *features_opt;
-  //char check_feature[BUFLEN];
-  //features_opt = config_lookup(&config,"features");
-  //settings -> features_ok = FALSE;
-  //if ( features_opt != NULL ) {
-  //  if ( config_setting_type(features_opt) != CONFIG_TYPE_ARRAY ) {
-  //    tlog("setting 'features' is not an array",ERROR);
-  //    config_destroy(&config);
-  //    slurm_free_job_info_msg(job_spec);
-  //    return CONFAIL; 
-  //  }
-  //  index = 0;
-  //  while ( config_setting_get_string_elem(features_opt, index) != NULL ) {
-  //    sprintf(check_feature,
-  //            "%s",
-  //            config_setting_get_string_elem(features_opt, index));
-  //    int feature_match = FALSE;
-  //    int i = 0;
-  //    for (i=0;i<n_job_features;i++) {
-  //      if ( strcmp(job_features[i],check_feature) == 0 ) {
-  //        feature_match = TRUE;
-  //        break;
-  //      }
-  //    }
-  //    if ( feature_match != TRUE ) {
-  //      sprintf(message,
-  //              "required feature %s not present in job request",
-  //             check_feature);
-  //      tlog(message,ERROR);
-  //      config_destroy(&config);
-  //      slurm_free_job_info_msg(job_spec);
-  //      return USERFAIL; 
-  //    }
-  //    index++;
-  //  }
-  //}
-  //settings -> features_ok = TRUE;
 
-  ///* check config for allowed 'accounts' and verify against job charge acct */
-  //settings -> account_ok = TRUE;
-  //settings -> job_account = (char *) 
-  //                          malloc(
-  //                                 strlen((job_spec -> job_array)[0].account) *
-  //                                  sizeof(char));
-  //sprintf(settings -> job_account,
-  //                    "%s",
-  //                    (job_spec -> job_array)[0].account);
-  //config_setting_t *accounts_opt;
-  //char check_account[BUFLEN];
-  //accounts_opt = config_lookup(&config,"accounts");
-  //if ( accounts_opt != NULL ) {
-  //  settings -> account_ok = FALSE;
-  //  if ( config_setting_type(accounts_opt) != CONFIG_TYPE_ARRAY ) {
-  //    tlog("setting 'accounts' is not an array",ERROR);
-  //    config_destroy(&config);
-  //    slurm_free_job_info_msg(job_spec);
-  //    return CONFAIL; 
-  //  }
-  //  index = 0;
-  //  while ( config_setting_get_string_elem(accounts_opt, index) != NULL ) {
-  //    sprintf(check_account,
-  //            "%s",
-  //            config_setting_get_string_elem(accounts_opt, index));
-  //    if ( strcmp(settings -> job_account,check_account) == 0 ) {
-  //      settings -> account_ok = TRUE;
-  //      break;
-  //    }
-  //    index++;
-  //  }
-  //}
-  //if ( settings -> account_ok == FALSE ) {
-  //  sprintf(message,
-  //          "account %s is not allowed to run ticrypt jobs",
-  //          settings -> job_account);
-  //  tlog(message,ERROR);
-  //  config_destroy(&config);
-  //  slurm_free_job_info_msg(job_spec);
-  //  return USERFAIL;
-  //}
+  /* process allowed 'accounts' options */
+  sprintf(message,"(%s) checking account settings", plugin_type);
+  debug(message);
+  config_setting_t *accounts_opt;
+  index = 0;
+  accounts_opt = config_lookup(&config,"accounts");
+  char add_account[BUFLEN] = "";
+  if ( accounts_opt != NULL ) {   
+    if ( config_setting_type(accounts_opt) != CONFIG_TYPE_ARRAY ) {
+      sprintf(message,"(%s) setting 'accounts' is not an array in %s",
+                       plugin_type,
+                       settings -> config_file);
+      error(message);
+      config_destroy(&config);
+      return SLURM_ERROR; 
+    }
+    settings -> accounts = malloc(index + 1 * sizeof(char*));
+    while ( config_setting_get_string_elem(accounts_opt, index) != NULL ) {
+      if ( index > 0 ) {
+        settings -> accounts = realloc(settings -> accounts,
+                                         index + 1 * sizeof(char*));
+      }
+      sprintf(add_account,"%s",
+                            config_setting_get_string_elem(accounts_opt, index));
+      (settings -> accounts)[index] = malloc(strlen(add_account)*sizeof(char));
+      sprintf((settings -> accounts)[index],
+              "%s",
+              config_setting_get_string_elem(accounts_opt, index));
+      index++;
+      settings -> n_accounts++;
+    }
+  }
+  
+  /* process required 'features'*/
+  sprintf(message,"(%s) checking feature settings", plugin_type);
+  debug(message);
+  config_setting_t *features_opt;
+  index = 0;
+  features_opt = config_lookup(&config,"features");
+  char add_feature[BUFLEN] = "";
+  if ( features_opt != NULL ) {   
+    if ( config_setting_type(features_opt) != CONFIG_TYPE_ARRAY ) {
+      sprintf(message,"(%s) setting 'features' is not an array in %s",
+                       plugin_type,
+                       settings -> config_file);
+      error(message);
+      config_destroy(&config);
+      return SLURM_ERROR; 
+    }
+    settings -> features = malloc(index + 1 * sizeof(char*));
+    while ( config_setting_get_string_elem(features_opt, index) != NULL ) {
+      if ( index > 0 ) {
+        settings -> features = realloc(settings -> features,
+                                         index + 1 * sizeof(char*));
+      }
+      sprintf(add_feature,"%s",
+                            config_setting_get_string_elem(features_opt, index));
+      (settings -> features)[index] = malloc(strlen(add_feature)*sizeof(char));
+      sprintf((settings -> features)[index],
+              "%s",
+              config_setting_get_string_elem(features_opt, index));
+      index++;
+      settings -> n_features++;
+    }
+  }
 
   return SLURM_SUCCESS;
 }
@@ -336,7 +324,24 @@ extern int init() {
 /* ************************************************************************** */
 extern int job_submit(struct job_descriptor *job_desc, uint32_t submit_uid,
 		      char **err_msg) {
+  int i=0;
   char message[256] = "";
+
+  /* Verify this is a ticrypt job request else exit clean without processing */
+  int is_ticrypt = FALSE;
+  for( i=0; i<job_desc->spank_job_env_size; i++ ) {
+    if( strcmp((job_desc -> spank_job_env)[i],OPTION_CHECK) == 0 ) {
+      is_ticrypt = TRUE;
+      break;
+    }
+  }
+  if ( is_ticrypt != TRUE ) {
+    sprintf(message,"(%s) not a ticrypt job request",plugin_type);
+    debug(message);
+    return SLURM_SUCCESS;
+  }
+
+  /* Debug logging if this is a ticrypt request to indicate start */
   sprintf(message,
           "(%s) processing job submission for ticrypt job submit plugin",
           plugin_type);
@@ -353,29 +358,154 @@ extern int job_submit(struct job_descriptor *job_desc, uint32_t submit_uid,
 
   /* Verify job request is exclusive */
   if ( ! job_desc -> shared || job_desc -> shared != 0 ) {
-    sprintf(message,"(%s) jobs must request exclusive access, updating",
+    sprintf(message,"(%s) forcing job to exclusive access",
                     plugin_type);
-    debug(message);
+    info(message);
     job_desc -> shared = 0; 
   }
 
   /* Verify partition allowed per ticrypt spank configuration */
-  if ( ! job_desc -> account ) {
-    sprintf(message,"(%s) jobs must have a valid account",plugin_type);
-    error(message);
-    return ESLURM_INVALID_ACCOUNT;
+  if ( settings.n_partitions == 0 ) {
+    sprintf(message,"(%s) configuration allows all partitions",
+                    plugin_type);
+    debug(message);
+  } else {
+    if ( job_desc -> partition ) {
+      sprintf(message,"(%s) verifying partition %s is allowed",
+                      plugin_type,
+                      job_desc -> partition);
+      debug(message);
+      int partition_ok = FALSE;
+      for( i=0;i<settings.n_partitions;i++ ) {
+        if ( strcmp(settings.partitions[i],job_desc->partition) == 0 ) {
+          partition_ok = TRUE;
+          break;
+        }
+      }
+      if ( partition_ok == FALSE ) {
+        sprintf(message,"(%s) partition %s is not allowed",
+                        plugin_type,
+                        job_desc -> partition);
+        error(message);
+        ticrypt_settings_free(&settings);
+        return ESLURM_INVALID_PARTITION_NAME;
+      }
+    } else { 
+      sprintf(message,"(%s) setting unspecified partition to first allowed %s",
+                      plugin_type,
+                      settings.partitions[0]);
+      info(message);
+      job_desc -> partition = xstrdup(settings.partitions[0]);
+    }
   }
-  sprintf(message,"(%s) verifying account %s is allowed",
-                  plugin_type,
-                  job_desc -> account);
-  debug(message);
 
   /* Verify account allowed per ticrypt spank configuration */
+  if ( settings.n_accounts == 0 ) {
+    sprintf(message,"(%s) configuration allows all accounts",
+                    plugin_type);
+    debug(message);
+  } else {
+    if ( job_desc -> account ) {
+      sprintf(message,"(%s) verifying account %s is allowed",
+                      plugin_type,
+                      job_desc -> account);
+      debug(message);
+      int account_ok = FALSE;
+      for( i=0;i<settings.n_accounts;i++ ) {
+        if ( strcmp(settings.accounts[i],job_desc -> account) == 0 ) {
+          account_ok = TRUE;
+          break;
+        }
+      }
+      if ( account_ok == FALSE ) {
+        sprintf(message,"(%s) account %s is not allowed",
+                        plugin_type,
+                        job_desc -> account);
+        error(message);
+        ticrypt_settings_free(&settings);
+        return ESLURM_ACCOUNTING_POLICY;
+      }
+    } else {
+      sprintf(message,"(%s) require explicit account declaration by user",
+                      plugin_type);
+      error(message);
+      ticrypt_settings_free(&settings);
+      return ESLURM_INVALID_ACCOUNT;
+    }
+  }
 
   /* Verify required features present in job request */
+  if ( settings.n_features < 1 ) {
+    sprintf(message,"(%s) configuration does not require specific features",
+                    plugin_type);
+    debug(message);
+  } else {
+    sprintf(message,"(%s) verifying required features in request",plugin_type);
+    debug(message);
+    sprintf(message,"(%s) job has features (%s) in request",
+                    plugin_type,
+                    job_desc -> features);
+    debug(message);
+    int n_job_features = 0;
+    char **job_features = malloc(1 * sizeof(char*));
+    if ( job_desc -> features != NULL ) {
+      char *ftoken;
+      ftoken = strtok(job_desc -> features,",");
+      char feature[256];
+      while ( ftoken != NULL ) {
+        job_features = realloc(job_features,(n_job_features + 1)*sizeof(char*));
+        sscanf(ftoken,"%s",feature);
+        job_features[n_job_features] = malloc(strlen(feature)*sizeof(char));
+        sprintf(job_features[n_job_features],"%s",feature);
+        n_job_features++;
+        ftoken = strtok(NULL,",");
+      }
+    }
+    
+    for( i=0; i<settings.n_features; i++ ) {
+      sprintf(message,"(%s) checking for required feature %s",
+                      plugin_type,
+                      settings.features[i]);
+      debug(message);
+      int job_has_feature = FALSE;
+      int j = 0;
+      for ( j=0; j<n_job_features; j++ ) {
+        if ( strcmp(job_features[j],settings.features[i]) == 0 ) {
+          job_has_feature = TRUE;
+        }
+      }  
+      if ( n_job_features == 0 || job_has_feature == FALSE ) {
+        sprintf(message,"(%s) updating job with missing required feature %s",
+                        plugin_type,
+                        settings.features[i]);
+        info(message);
+        char new_feature_string[BUFLEN] = "";
+        if ( ! job_desc -> features ) {
+          job_desc -> features = xstrdup(settings.features[i]);
+        } else {
+          sprintf(new_feature_string,"%s,%s",
+                                     job_desc -> features,
+                                     settings.features[i]);
+          job_desc -> features = xstrdup(new_feature_string);
+        }
+      }
+    }
+    sprintf(message,"(%s) after processing, job requests features (%s)",
+                    plugin_type,
+                    job_desc -> features);
+    debug(message);
+    if ( job_features != NULL ) {
+      for( i=0; i<n_job_features; i++ ) {
+        if ( job_features[i] != NULL ) {
+          free(job_features[i]);
+        }
+      }
+      free(job_features);
+    } 
+  }
 
-  /* Verify requeue enabled if allowed per ticrypt spank configuration */
 
+  ticrypt_settings_free(&settings);
   return SLURM_SUCCESS;
 }
 
