@@ -499,62 +499,6 @@ int slurm_spank_init(spank_t sp, int ac, char **av) {
   return PASS;
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/*                           init_post_opt                                    */
-/*                                                                            */
-/* ************************************************************************** */
-//int slurm_spank_init_post_opt(spank_t sp, int ac, char **av) {
-//  tlog("starting init_post_opt",DEBUG);
-//  /* Define logging variables */
-//  char message[BUFLEN] = "";
-//
-//  /* Register spank options */
-//  spank_option_register(sp,spank_options);
-//
-//  /*  ---- TESTING ---- */
-//  tlog("========================================",ERROR);
-//  tlog("= TEST WHAT WE CAN USE IN init_post_opt=",ERROR);
-//  tlog("========================================",ERROR);
-//  int item = S_JOB_ENV;
-//  char **job_env;
-//  int length = 0;
-// 
-//  if ( spank_get_item(sp,item,&job_env) != ESPANK_SUCCESS ) {
-//    int error_id = spank_get_item(sp,item,&job_env);
-//    sprintf(message,"could not retrieve item %s (%s)",spank_item_names[item],spank_error_names[error_id]);
-//    tlog(message,ERROR);
-//  } else {
-//    sprintf(message,"found item %s",spank_item_names[item]);
-//    tlog(message,ERROR);
-//  }
-//  tlog("========================================",ERROR);
-//  /*  ---- END TESTING ---- */
-//
-//  /* Verify total task count does not exceed node count */
-//  /* https://github.com/UFResearchComputing/ticrypt-spank/issues/1 */
-//  uint32_t n_tasks = 2;
-//  uint32_t n_nodes = 1;
-//
-//  if ( spank_get_item(sp,S_JOB_NNODES,&n_nodes) != ESPANK_SUCCESS ) {
-//    tlog("could not determine number of nodes in job",ERROR);
-//    return FAIL;
-//  }
-//  if ( spank_get_item(sp,S_JOB_TOTAL_TASK_COUNT,&n_tasks) != ESPANK_SUCCESS ) {
-//    tlog("could not determine number of tasks in job",ERROR);
-//    return FAIL;
-//  }
-//  sprintf(message,"job request with %d tasks on %d nodes",n_tasks,n_nodes);
-//  tlog(message,DEBUG);
-//  if ( n_tasks > n_nodes ) {
-//    tlog("ticrypt jobs require a single task per node",ERROR);
-//    return FAIL;
-//  } 
-//
-//  tlog("completed init_post_opt",DEBUG);
-//  return PASS;
-//}
-
 
 /* ************************************************************************** */
 /*                                                                            */

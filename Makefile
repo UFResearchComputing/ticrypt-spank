@@ -50,6 +50,7 @@ install: $(library) $(doc) $(submit)
 	install -m 0640 config/ticrypt-spank.conf /etc/ticrypt-spank.conf
 	install -m 0644 $(doc) /usr/local/share/man/man8/ticrypt-spank.8.gz
 	install -m 0755 $(plugin) $(LIBDIR)/$(plugin)
+
 clean:
 	rm -f $(library)
 	rm -f $(submit)
