@@ -1,11 +1,11 @@
 Name:       ticrypt-spank	
-Version:    1
-Release:    2
+Version:    1.2
+Release:    3
 Summary:    Ticrypt spank plugin for Slurm
 
 License:    GPLv3	
 URL:        https://github.com/UFResearchComputing/ticrypt-spank
-Source0:    https://github.com/UFResearchComputing/ticrypt-spank/archive/ticrypt-spank-%{version}-%{release}.tar.gz
+Source0:    https://github.com/UFResearchComputing/ticrypt-spank/archive/v%{version}.tar.gz
 
 BuildRequires:	gcc slurm-devel libconfig-devel git
 Requires:	slurm libconfig
@@ -48,6 +48,8 @@ rm -rf %{buildroot}
 %doc
 
 %changelog
+* Wed Nov 27 2019 William Howell <whowell@rc.ufl.edu> - 1.2-3
+- Fix up build docs
 * Wed Nov 27 2019 William Howell <whowell@rc.ufl.edu> - 1.2
 - Add job submit plugin
 * Wed Nov 13 2019 William Howell <whowell@rc.ufl.edu> - 1.1

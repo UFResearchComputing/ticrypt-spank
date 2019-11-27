@@ -39,7 +39,7 @@ cd ..
 # example with Slurm 19-05-4-1 installed in /opt/slurm
 
 cd ticrypt-spank/
-make install LIB=/opt/slurm/lib64/slurm SLURM_VERSION=slurm-19-05-4-1
+make install LIB=/opt/slurm/lib64/slurm SLURM_VERSION=slurm-19-05-4-1 INC=/opt/slurm/include
 ```
 
 #### RPM Build and Install
@@ -50,27 +50,21 @@ make install LIB=/opt/slurm/lib64/slurm SLURM_VERSION=slurm-19-05-4-1
 * Download desired release to SOURCES
 ```
 cd $HOME/rpmbuild/SOURCES
-wget https://github.com/UFResearchComputing/ticrypt-spank/archive/ticrypt-spank-<major>-<minor>.tar.gz
-```
-
-* Depending on the git system downloaded from, it may be necessary to extract the source, rename, and compress for example
-```
-cd $HOME/rpmbuild/SOURCES
-tar -xf ticrypt-spank-<major>-<minor>.tar.gz
-mv ticrypt-spank-<major>-<minor> ticrypt-spank-<major>
-tar -czf ticrypt-spank-v<major>.<minor>.tar.gz ticrypt-spank-<major>
+wget https://github.com/UFResearchComputing/ticrypt-spank/archive/v<major>.<minor>.tar.gz
 ```
 
 * Copy the specfile from the source to SPECS
 ```
 cd $HOME/rpmbuild/SOURCES
-tar -xf ticrypt-spank-<major>-<minor>.tar.gz   #depend on if renamed above
-cp ticrypt-spank-<major>/ticrypt-spank.spec $HOME/rpmbuild/SPECS
+tar -xf v<major>.<minor>.tar.gz 
+cp ticrypt-spank-<major>.<minor>/ticrypt-spank.spec $HOME/rpmbuild/SPECS
 ```
+
+* Modify specifle release revision if needed or applicable
 
 * Install dependencies if required
 ```
-yum install gcc slurm-devel libconfig
+yum install gcc slurm-devel libconfig git
 ```
 
 * Build the RPMs, defining the path to slurm libraries and slurm version if required
@@ -81,7 +75,7 @@ rpmbuild -ba --define='lib /usr/lib64/slurm' --define='slurm_version slurm-19-05
 
 * Install generated RPMs
 ```
-yum install $HOME/rpmbuild/RPMS/x86_64/ticrypt-spank-<major>-<minor>.x86_64.rpm
+yum install $HOME/rpmbuild/RPMS/x86_64/ticrypt-spank-<major>.<minor>-<release>.x86_64.rpm
 ```
 
 ### Configuration
