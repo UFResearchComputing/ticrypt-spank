@@ -22,13 +22,14 @@ This SPANK plugin requires [libconfig](http://hyperrealm.github.io/libconfig/) w
 cp config/ticrypt-spank.conf
 ``` 
 
-* Clone the slurm submodule into the checked out repository
+* Clone the slurm submodule into the checked out repository and run the configure for Slurm
 
 ```
 cd ticrypt-spank/
-git clone https://github.com/SchedMD/slurm.git ./slurm
+git submodule update --init
 cd slurm
 checkout <desired slurm branch>
+./configure
 cd ..
 ```
 
