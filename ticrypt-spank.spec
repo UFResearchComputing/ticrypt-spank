@@ -1,9 +1,9 @@
-Name:	ticrypt-spank	
+Name:	        ticrypt-spank	
 Version:	1
-Release:	1
+Release:	2
 Summary:	Ticrypt spank plugin for Slurm
 
-License:    GPLv3	
+License:        GPLv3	
 URL:		https://github.com/UFResearchComputing/ticrypt-spank
 Source0:	https://github.com/UFResearchComputing/ticrypt-spank/archive/ticrypt-spank-%{version}-%{release}.tar.gz
 
@@ -11,7 +11,7 @@ BuildRequires:	gcc slurm-devel libconfig-devel
 Requires:	slurm libconfig
 
 %description
-Provides a Slurm Spank plugin to allow node reconfiguration for scheduling Ticrypt VM Hosts.
+Provides Slurm Spank and submit plugins to allow node reconfiguration for scheduling Ticrypt VM Hosts.
 
 %prep
 %setup -q 
@@ -25,6 +25,7 @@ make install DESTDIR=/opt/slurm
 cp ticrypt.so %{buildroot}/opt/slurm/lib64/slurm/
 cp config/ticrypt-spank.conf %{buildroot}/etc/
 cp doc/ticrypt-spank.8.gz %{buildroot}/usr/local/share/man/man8/
+cp job_submit_ticrypt.so %{buildroot}/opt/slurm/lib64/slurm/
 
 %clean
 rm -rf %_builddir/ticrypt-spank-%{version}
@@ -32,11 +33,14 @@ rm -rf %{buildroot}
 
 %files
 %attr(0755,root,root) /opt/slurm/lib64/slurm/ticrypt.so
+%attr(0755,root,root) /opt/slurm/lib64/slurm/job_submit_ticrypt.so
 %attr(0640,root,root) /etc/ticrypt-spank.conf
 %attr(0644,root,root) /usr/local/share/man/man8/ticrypt-spank.8.gz
 %doc
 
 %changelog
+* Wed Nov 27 2019 William Howell <whowell@rc.ufl.edu> - 1.2
+- Add job submit plugin 
 * Wed Nov 13 2019 William Howell <whowell@rc.ufl.edu> - 1.1
 - Version 1.1 release
 * Sun Nov 10 2019 William Howell <whowell@rc.ufl.edu> - 1.0
