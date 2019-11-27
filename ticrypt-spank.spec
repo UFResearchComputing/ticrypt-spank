@@ -13,29 +13,36 @@ Requires:	slurm libconfig
 %description
 Provides Slurm Spank and submit plugins to allow node reconfiguration for scheduling Ticrypt VM Hosts.
 
+%{expand:%%define default_slurm_version slurm-19-05-4-1}
+%{!?slurm_version: %define slurm_version %{default_slurm_version}}
+%{expand:%%define default_lib /opt/slurm/lib64/slurm}
+%{!?lib: %define lib %{default_lib}}
+%{expand:%%define default_man /usr/local/share/man/man8}
+%{!?man: %define man %{default_man}}
+
 %prep
 %setup -q 
 
 %install
-mkdir -p %{buildroot}/opt/slurm/lib64/slurm
 mkdir -p %{buildroot}/etc
-mkdir -p %{buildroot}/usr/local/share/man/man8
+mkdir -p %{buildroot}/%{man}
+mkdir -p %{buildroot}/%{lib}
 cd %_builddir/ticrypt-spank-%{version}
-make install DESTDIR=/opt/slurm
-cp ticrypt.so %{buildroot}/opt/slurm/lib64/slurm/
+make all LIBDIR=%{lib} SLURM_VERSION=%{slurm_version}
+cp ticrypt.so %{buildroot}/%{lib}/
 cp config/ticrypt-spank.conf %{buildroot}/etc/
-cp doc/ticrypt-spank.8.gz %{buildroot}/usr/local/share/man/man8/
-cp job_submit_ticrypt.so %{buildroot}/opt/slurm/lib64/slurm/
+cp doc/ticrypt-spank.8.gz %{buildroot}/%{man}
+cp job_submit_ticrypt.so %{buildroot}/%{lib}/
 
 %clean
 rm -rf %_builddir/ticrypt-spank-%{version}
 rm -rf %{buildroot}
 
 %files
-%attr(0755,root,root) /opt/slurm/lib64/slurm/ticrypt.so
-%attr(0755,root,root) /opt/slurm/lib64/slurm/job_submit_ticrypt.so
+%attr(0755,root,root) %{lib}/ticrypt.so
+%attr(0755,root,root) %{lib}/job_submit_ticrypt.so
 %attr(0640,root,root) /etc/ticrypt-spank.conf
-%attr(0644,root,root) /usr/local/share/man/man8/ticrypt-spank.8.gz
+%attr(0644,root,root) %{man}/ticrypt-spank.8.gz
 %doc
 
 %changelog
