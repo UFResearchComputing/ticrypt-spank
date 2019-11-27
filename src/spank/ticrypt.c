@@ -82,6 +82,56 @@ const char *spank_context_names[] = {
   "S_CTX_JOB_SCRIPT"
 };
 
+const char *spank_error_names[] = {
+  "ESPANK_SUCCESS",
+  "ESPANK_ERROR",
+  "ESPANK_BAD_ARG",
+  "ESPANK_NOT_TASK",
+  "ESPANK_ENV_EXISTS",
+  "ESPANK_ENV_NOEXIST",
+  "ESPANK_NOSPACE",
+  "ESPANK_NOT_REMOTE",
+  "ESPANK_NOEXIST",
+  "ESPANK_NOT_EXECD",
+  "ESPANK_NOT_AVAIL",
+  "ESPANK_NOT_LOCAL",
+};
+
+const char *spank_item_names[] = {
+  "S_JOB_UID",               
+  "S_JOB_GID",               
+  "S_JOB_ID",                
+  "S_JOB_STEPID",            
+  "S_JOB_NNODES",            
+  "S_JOB_NODEID",            
+  "S_JOB_LOCAL_TASK_COUNT",  
+  "S_JOB_TOTAL_TASK_COUNT",  
+  "S_JOB_NCPUS",             
+  "S_JOB_ARGV",              
+  "S_JOB_ENV",               
+  "S_TASK_ID",               
+  "S_TASK_GLOBAL_ID",        
+  "S_TASK_EXIT_STATUS",      
+  "S_TASK_PID",              
+  "S_JOB_PID_TO_GLOBAL_ID",  
+  "S_JOB_PID_TO_LOCAL_ID",   
+  "S_JOB_LOCAL_TO_GLOBAL_ID",
+  "S_JOB_GLOBAL_TO_LOCAL_ID",
+  "S_JOB_SUPPLEMENTARY_GIDS",
+  "S_SLURM_VERSION",         
+  "S_SLURM_VERSION_MAJOR",   
+  "S_SLURM_VERSION_MINOR",   
+  "S_SLURM_VERSION_MICRO",   
+  "S_STEP_CPUS_PER_TASK",    
+  "S_JOB_ALLOC_CORES",       
+  "S_JOB_ALLOC_MEM",         
+  "S_STEP_ALLOC_CORES",      
+  "S_STEP_ALLOC_MEM",        
+  "S_SLURM_RESTART_COUNT",   
+  "S_JOB_ARRAY_ID",          
+  "S_JOB_ARRAY_TASK_ID"     
+};
+
 int getSpankContext(char *context) {
   spank_context_t sp_context = spank_context();
   if ( sp_context == S_CTX_ERROR ) {
@@ -445,78 +495,10 @@ int slurm_spank_init(spank_t sp, int ac, char **av) {
   /* Register spank options */
   spank_option_register(sp,spank_options);
 
+  tlog("completed init",DEBUG);
   return PASS;
 }
 
-/* ************************************************************************** */
-/*                                                                            */
-/*                             user_init                                      */
-/*                                                                            */
-/* ************************************************************************** */
-int slurm_spank_user_init(spank_t sp, int ac, char **av) {
-  tlog("starting user_init",DEBUG);
-  /* Define logging variables */
-  char message[BUFLEN] = "";
-
-  /* Register spank options */
-  spank_option_register(sp,spank_options);
-
-  /* Verify total task count does not exceed node count */
-  /* https://github.com/UFResearchComputing/ticrypt-spank/issues/1 */
-  uint32_t n_tasks = 2;
-  uint32_t n_nodes = 1;
-  if ( spank_get_item(sp,S_JOB_NNODES,&n_nodes) != ESPANK_SUCCESS ) {
-    tlog("could not determine number of nodes in job",ERROR);
-    return FAIL;
-  }
-  if ( spank_get_item(sp,S_JOB_TOTAL_TASK_COUNT,&n_tasks) != ESPANK_SUCCESS ) {
-    tlog("could not determine number of tasks in job",ERROR);
-    return FAIL;
-  }
-  sprintf(message,"job request with %d tasks on %d nodes",n_tasks,n_nodes);
-  tlog(message,DEBUG);
-  if ( n_tasks > n_nodes ) {
-    tlog("ticrypt jobs require a single task per node",ERROR);
-    return FAIL;
-  } 
-
-  return PASS;
-}
-
-/* ************************************************************************** */
-/*                                                                            */
-/*                          local_user_init                                   */
-/*                                                                            */
-/* ************************************************************************** */
-int slurm_spank_local_user_init(spank_t sp, int ac, char **av) {
-  tlog("starting local_user_init",DEBUG);
-  /* Define logging variables */
-  char message[BUFLEN] = "";
-
-  /* Register spank options */
-  spank_option_register(sp,spank_options);
-
-  /* Verify total task count does not exceed node count */
-  /* https://github.com/UFResearchComputing/ticrypt-spank/issues/1 */
-  uint32_t n_tasks = 2;
-  uint32_t n_nodes = 1;
-  if ( spank_get_item(sp,S_JOB_NNODES,&n_nodes) != ESPANK_SUCCESS ) {
-    tlog("could not determine number of nodes in job",ERROR);
-    return FAIL;
-  }
-  if ( spank_get_item(sp,S_JOB_TOTAL_TASK_COUNT,&n_tasks) != ESPANK_SUCCESS ) {
-    tlog("could not determine number of tasks in job",ERROR);
-    return FAIL;
-  }
-  sprintf(message,"job request with %d tasks on %d nodes",n_tasks,n_nodes);
-  tlog(message,DEBUG);
-  if ( n_tasks > n_nodes ) {
-    tlog("ticrypt jobs require a single task per node",ERROR);
-    return FAIL;
-  } 
-
-  return PASS;
-}
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -675,6 +657,7 @@ int slurm_spank_task_init_privileged(spank_t sp, int ac, char **av) {
   /* logging verification */
   tlog("ticrypt conversion complete",INFO);
 
+  tlog("completed task_init_privileged",DEBUG);
   return PASS;
 }
 
@@ -835,6 +818,7 @@ int slurm_spank_task_exit(spank_t sp, int ac, char **av) {
   /* logging verification */
   tlog("ticrypt revert complete",INFO);
 
+  tlog("completed task_exit",DEBUG);
   return PASS;
 }
 

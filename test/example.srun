@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --ntasks=1
+#SBATCH --nodes=1
 #SBATCH --ticrypt
 #SBATCH --exclusive 
 #SBATCH --time=00:05:00

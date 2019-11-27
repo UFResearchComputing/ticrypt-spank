@@ -1,6 +1,6 @@
 # ticrypt-spank
 
-A [Slurm](https://www.schedmd.com/) SPANK plugin to allow calling cluster specific modules for node reconfiguration to [TiCrypt](https://terainsights.com/) VM hosts. The plugin adds the --ticrypt Slurm option for requesting a TiCrypt node. The plugin utilizes a configuration file to enforce limits or requirements on accounts, features, etc ... which are allowed to call the plugin.
+[Slurm](https://www.schedmd.com/) SPANK and job submit plugins to allow calling cluster specific modules for node reconfiguration to [TiCrypt](https://terainsights.com/) VM hosts. The plugin adds the --ticrypt Slurm option for requesting a TiCrypt node. The plugin utilizes a configuration file to enforce limits or requirements on accounts, features, etc ... which are allowed to call the plugin.  The configuration file is shared and required for both the spank and job submit plugins.
 
 ## Getting Started
 
@@ -8,7 +8,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-This SPANK plugin requires [libconfig](http://hyperrealm.github.io/libconfig/) which is broadly availble under common Linux distributions. Utilizing the plugin requires a functional [Slurm](https://www.schedmd.com/) installation with [plugstack](https://slurm.schedmd.com/spank.html) configuration. Building the packages or development requires slurm-devel. 
+This SPANK plugin requires [libconfig](http://hyperrealm.github.io/libconfig/) which is broadly availble under common Linux distributions. Utilizing the plugin requires a functional [Slurm](https://www.schedmd.com/) installation with [plugstack](https://slurm.schedmd.com/spank.html) configuration. Building the packages or development requires slurm-devel as well as a checked out copy of the [slurm source](https://github.com/SchedMD/slurm) of correct version for your system in order to build the job submit plugin. 
 
 ### Installation
 
@@ -22,13 +22,24 @@ This SPANK plugin requires [libconfig](http://hyperrealm.github.io/libconfig/) w
 cp config/ticrypt-spank.conf
 ``` 
 
+* Clone the slurm submodule into the checked out repository and run the configure for Slurm
+
+```
+cd ticrypt-spank/
+git submodule update --init
+cd slurm
+checkout <desired slurm branch>
+./configure
+cd ..
+```
+
 * Build the plugin optionally specifying DESTDIR if required for your environment
 
 ```
-# example with Slurm installed in /opt/slurm
+# example with Slurm 19-05-4-1 installed in /opt/slurm
 
 cd ticrypt-spank/
-make install DESTDIR=/opt/slurm
+make install LIB=/opt/slurm/lib64/slurm SLURM_VERSION=slurm-19-05-4-1
 ```
 
 #### RPM Build and Install
@@ -62,10 +73,10 @@ cp ticrypt-spank-<major>/ticrypt-spank.spec $HOME/rpmbuild/SPECS
 yum install gcc slurm-devel libconfig
 ```
 
-* Build the RPMs
+* Build the RPMs, defining the path to slurm libraries and slurm version if required
 ```
 cd $HOME/rpmbuild/SPECS
-rpmbuild -ba ticrypt-spank.spec
+rpmbuild -ba --define='lib /usr/lib64/slurm' --define='slurm_version slurm-19-05-4-1' ticrypt-spank.spec
 ```
 
 * Install generated RPMs

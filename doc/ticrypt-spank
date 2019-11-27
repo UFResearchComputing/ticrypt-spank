@@ -1,20 +1,22 @@
 .\" Manpage for ticrypt-spank.
 .\" Contact whowell@rc.ufl.edu.
-.TH man 8 "13 Nov 2019" "1.1" "ticrypt-spank man page"
+.TH man 8 "27 Nov 2019" "1.2" "ticrypt-spank man page"
 .SH NAME
 ticrypt-spank \- Slurm spank plugin for ticrypt node reconfiguration
 .SH SYNOPSIS
 
-  Install the ticrypt.so Spank plugin
+  Install the ticrypt.so Spank plugin and job_submit_ticrypt.so plugin
 
   Include in plugstack.conf for Slurm
 
   Configure /etc/ticrypt-spank.conf with convert and revert commands
 
+  Add ticrypt to JobSubmitPlugins in slurm.conf
+
   Run a Slurm job with --ticrypt
 
 .SH DESCRIPTION
-ticrypt-spank provides ticrypt.so spank plugin for Slurm. This plugin provides the --ticrypt Slurm option and mechanism to call commands for converting a standard compute node to a ticrypt vm controller. Actual conversion is site specific and requires a site module program to be deployed and referenced in ticrypt-spank.conf.
+ticrypt-spank provides ticrypt.so spank plugin and ticrypt job submit plugin for Slurm. This spank plugin provides the --ticrypt Slurm option and mechanism to call commands for converting a standard compute node to a ticrypt vm controller. Actual conversion is site specific and requires a site module program to be deployed and referenced in ticrypt-spank.conf. The job submit plugin ensures ticrypt-spank.conf ACLs and feature requirements are honored and a single task per node layout. 
 
 In the event of failed conversion, the node is marked to DRAIN in Slurm and an attempt is made to requeue the calling job. The ability to requeue a job is dependent on the jobs options and site configuration, namely Slurm's JobRequeue option. In the case where revert fails during job task end, the node is also set to DRAIN but the job is not requeued.
 
@@ -32,20 +34,20 @@ Configuration File: /etc/ticrypt-spank.conf
   accounts:   array of accounts allowed to utilize plugin
 
 .SH FILES
-  /opt/slurm/lib64/slurm/ticrypt.so  - spank plugin
-  /etc/ticrypt-spank.conf            - plugin configuration file
-  /usr/local/share/man/ticrypt-spank - man page
+  /opt/slurm/lib64/slurm/ticrypt.so            - spank plugin
+  /opt/slurm/lib64/slurm/job_submitticrypt.so  - job submit plugin
+  /etc/ticrypt-spank.conf                      - plugin configuration file
+  /usr/local/share/man/ticrypt-spank           - man page
 
 .SH SEE ALSO
   https://slurm.schedmd.com/spank.html
+  https://slurm.schedmd.com/job_submit_plugins.html
   https://slurm.schedmd.com/slurm.conf.html
   https://terainsights.com/
   http://hyperrealm.github.io/libconfig/
 
 .SH BUGS
 Report bugs at https://github.com/UFResearchComputing/ticrypt-spank/issues
-
-  - future config options not yet implemented
 
 .SH AUTHOR
 William Howell (whowell@rc.ufl.edu)
