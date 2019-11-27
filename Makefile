@@ -55,7 +55,7 @@ dev: $(dev)
 slurm: $(slurm)
 
 install: $(library) $(doc) $(submit)
-	mkdir -p $(DESTDIR)/lib64/slurm
+	mkdir -p $(LIBDIR)
 	install -m 0755 $(library) $(LIBDIR)/$(library)
 	install -m 0640 config/ticrypt-spank.conf /etc/ticrypt-spank.conf
 	install -m 0644 $(doc) /usr/local/share/man/man8/ticrypt-spank.8.gz

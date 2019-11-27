@@ -36,10 +36,10 @@ cd ..
 * Build the plugin optionally specifying DESTDIR if required for your environment
 
 ```
-# example with Slurm installed in /opt/slurm
+# example with Slurm 19-05-4-1 installed in /opt/slurm
 
 cd ticrypt-spank/
-make install DESTDIR=/opt/slurm
+make install LIB=/opt/slurm/lib64/slurm SLURM_VERSION=slurm-19-05-4-1
 ```
 
 #### RPM Build and Install
@@ -73,10 +73,10 @@ cp ticrypt-spank-<major>/ticrypt-spank.spec $HOME/rpmbuild/SPECS
 yum install gcc slurm-devel libconfig
 ```
 
-* Build the RPMs
+* Build the RPMs, defining the path to slurm libraries and slurm version if required
 ```
 cd $HOME/rpmbuild/SPECS
-rpmbuild -ba ticrypt-spank.spec
+rpmbuild -ba --define='lib /usr/lib64/slurm' --define='slurm_version slurm-19-05-4-1' ticrypt-spank.spec
 ```
 
 * Install generated RPMs
