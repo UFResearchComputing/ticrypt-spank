@@ -471,17 +471,6 @@ int ticrypt_settings_init(ticrypt_settings_t *settings,int job_id) {
 static int ticrypt = FALSE;
 static int _ticrypt_opt_flag_process( int val, const char *optarg, int remote );
 
-struct spank_option spank_options[] = {
-  { 
-    "ticrypt",
-    "",
-	"Trigger ticrypt node reconfiguration",
-    2,
-    0,
-	(spank_opt_cb_f) _ticrypt_opt_flag_process
-  },
-  SPANK_OPTIONS_TABLE_END
-};
 
 
 /* ************************************************************************** */
@@ -493,6 +482,17 @@ int slurm_spank_init(spank_t sp, int ac, char **av) {
   tlog("starting init",DEBUG);
 
   /* Register spank options */
+  struct spank_option spank_options[] = {
+    { 
+      "ticrypt",
+      "",
+  	"Trigger ticrypt node reconfiguration",
+      2,
+      0,
+  	(spank_opt_cb_f) _ticrypt_opt_flag_process
+    },
+    SPANK_OPTIONS_TABLE_END
+  };
   spank_option_register(sp,spank_options);
 
   tlog("completed init",DEBUG);
