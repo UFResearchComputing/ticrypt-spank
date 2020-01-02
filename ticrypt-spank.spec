@@ -32,9 +32,9 @@ mkdir -p %{buildroot}/%{lib}
 cd %_builddir/ticrypt-spank-%{version}
 make all LIB=%{lib} SLURM_VERSION=%{slurm_version} INC=%{inc}
 cp ticrypt.so %{buildroot}/%{lib}/
-cp config/ticrypt-spank.conf %{buildroot}/etc/
 cp doc/ticrypt-spank.8.gz %{buildroot}/%{man}
 cp job_submit_ticrypt.so %{buildroot}/%{lib}/
+cp config/ticrypt-spank.conf %{buildroot}/etc/ticrypt-spank.conf
 
 %clean
 rm -rf %_builddir/ticrypt-spank-%{version}
@@ -43,9 +43,10 @@ rm -rf %{buildroot}
 %files
 %attr(0755,root,root) %{lib}/ticrypt.so
 %attr(0755,root,root) %{lib}/job_submit_ticrypt.so
-%attr(0640,root,root) /etc/ticrypt-spank.conf
 %attr(0644,root,root) %{man}/ticrypt-spank.8.gz
 %doc
+
+%config(noreplace) /etc/ticrypt-spank.conf
 
 %changelog
 * Thu Jan 2 2020 William Howell <whowell@rc.ufl.edu> - 1.2-4
