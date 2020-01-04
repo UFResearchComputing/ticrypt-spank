@@ -68,12 +68,11 @@ job_submit_ticrypt.lo: src/ticrypt_submit/job_submit_ticrypt.c \
  slurm/src/common/plugin.h /usr/include/dirent.h \
  /usr/include/bits/dirent.h /usr/include/bits/posix1_lim.h \
  /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
- slurm/src/slurmctld/slurmctld.h slurm/src/common/checkpoint.h \
- slurm/src/common/node_conf.h slurm/src/common/xhash.h \
+ slurm/src/slurmctld/slurmctld.h slurm/src/common/node_conf.h \
  slurm/src/common/read_config.h slurm/src/common/parse_config.h \
- slurm/src/common/job_resources.h slurm/src/common/switch.h \
- slurm/src/slurmd/slurmstepd/slurmstepd_job.h /usr/include/pwd.h \
- slurm/src/common/io_hdr.h slurm/src/common/xmalloc.h \
+ slurm/src/common/xhash.h slurm/src/common/job_resources.h \
+ slurm/src/common/switch.h slurm/src/slurmd/slurmstepd/slurmstepd_job.h \
+ /usr/include/pwd.h slurm/src/common/io_hdr.h slurm/src/common/xmalloc.h \
  slurm/src/common/stepd_api.h slurm/src/common/timers.h \
  slurm/src/common/slurm_auth.h slurm/src/common/slurm_jobacct_gather.h \
  /usr/include/sys/resource.h /usr/include/bits/resource.h \
@@ -365,15 +364,13 @@ slurm/src/common/plugin.h:
 
 slurm/src/slurmctld/slurmctld.h:
 
-slurm/src/common/checkpoint.h:
-
 slurm/src/common/node_conf.h:
-
-slurm/src/common/xhash.h:
 
 slurm/src/common/read_config.h:
 
 slurm/src/common/parse_config.h:
+
+slurm/src/common/xhash.h:
 
 slurm/src/common/job_resources.h:
 

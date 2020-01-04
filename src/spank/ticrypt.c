@@ -238,12 +238,14 @@ int ticrypt_settings_init(ticrypt_settings_t *settings,int job_id) {
   const char* env_config_file = getenv("TICRYPT_SPANK_CONFIG");
   char default_path[] = "/etc/ticrypt-spank.conf";
   if ( env_config_file != NULL ) {
-    settings -> config_file = (char *) malloc(strlen(env_config_file) * sizeof(char));
+    settings -> config_file = 
+                (char *) malloc((1 + strlen(env_config_file)) * sizeof(char));
     sprintf(settings -> config_file,
             "%s",
             env_config_file);
   } else {
-    settings -> config_file = (char *) malloc(strlen(default_path) * sizeof(char));
+    settings -> config_file = 
+                (char *) malloc((1 + strlen(default_path)) * sizeof(char));
     sprintf(settings -> config_file,
             "%s",
             "/etc/ticrypt-spank.conf");
@@ -284,7 +286,8 @@ int ticrypt_settings_init(ticrypt_settings_t *settings,int job_id) {
     config_destroy(&config);
     return CONFAIL;
   }
-  settings -> convert = (char *) malloc(strlen(convert_opt) * sizeof(char));
+  settings -> convert = 
+              (char *) malloc((1 + strlen(convert_opt)) * sizeof(char));
   sprintf(settings -> convert,"%s",convert_opt);
 
   /* check for required 'revert' option */
@@ -294,8 +297,10 @@ int ticrypt_settings_init(ticrypt_settings_t *settings,int job_id) {
     config_destroy(&config);
     return CONFAIL;
   }
-  settings -> revert = (char *) malloc(strlen(convert_opt) * sizeof(char));
+  settings -> revert = 
+              (char *) malloc((1 + strlen(revert_opt)) * sizeof(char));
   sprintf(settings -> revert,"%s",revert_opt);
+
 
   /* check for optional 'requeue' option */
   settings -> allow_requeue = TRUE;
@@ -332,7 +337,7 @@ int ticrypt_settings_init(ticrypt_settings_t *settings,int job_id) {
   partitions_opt = config_lookup(&config,"partitions");
   if ( partitions_opt != NULL ) {
     settings -> job_partition = (char *) 
-                malloc(strlen((job_spec -> job_array)[0].partition)
+                malloc((1 + strlen((job_spec -> job_array)[0].partition))
                 * sizeof(char));
 	sprintf(settings -> job_partition,
 			"%s",
@@ -421,8 +426,7 @@ int ticrypt_settings_init(ticrypt_settings_t *settings,int job_id) {
   /* check config for allowed 'accounts' and verify against job charge acct */
   settings -> account_ok = TRUE;
   settings -> job_account = (char *) 
-                            malloc(
-                                   strlen((job_spec -> job_array)[0].account) *
+                            malloc((1 + strlen((job_spec -> job_array)[0].account)) *
                                     sizeof(char));
   sprintf(settings -> job_account,
                       "%s",

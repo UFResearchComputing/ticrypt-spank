@@ -147,12 +147,16 @@ int ticrypt_settings_init(ticrypt_settings_t *settings) {
   /* config_file */ 
   const char* env_config_file = getenv("TICRYPT_SPANK_CONFIG");
   if ( env_config_file != NULL ) {
-    settings->config_file=(char *)malloc(strlen(env_config_file)*sizeof(char));
+    settings->config_file= (char *)
+                           malloc((1 + strlen(env_config_file)) *
+                           sizeof(char));
     sprintf(settings -> config_file,
             "%s",
             env_config_file);
   } else {
-    settings->config_file=(char *)malloc(strlen(DEFAULT_CONFIG)*sizeof(char));
+    settings->config_file= (char *)
+                           malloc((1 + strlen(DEFAULT_CONFIG)) *
+                           sizeof(char));
     sprintf(settings -> config_file,
             "%s",
             DEFAULT_CONFIG);
@@ -227,7 +231,8 @@ int ticrypt_settings_init(ticrypt_settings_t *settings) {
       }
       sprintf(add_partition,"%s",
                             config_setting_get_string_elem(partitions_opt, index));
-      (settings -> partitions)[index] = malloc(strlen(add_partition)*sizeof(char));
+      (settings -> partitions)[index] = malloc((1 + strlen(add_partition)) *
+                                        sizeof(char));
       sprintf((settings -> partitions)[index],
               "%s",
               config_setting_get_string_elem(partitions_opt, index));
@@ -260,7 +265,8 @@ int ticrypt_settings_init(ticrypt_settings_t *settings) {
       }
       sprintf(add_account,"%s",
                             config_setting_get_string_elem(accounts_opt, index));
-      (settings -> accounts)[index] = malloc(strlen(add_account)*sizeof(char));
+      (settings -> accounts)[index] = malloc((1 + strlen(add_account)) *
+                                      sizeof(char));
       sprintf((settings -> accounts)[index],
               "%s",
               config_setting_get_string_elem(accounts_opt, index));
@@ -293,7 +299,8 @@ int ticrypt_settings_init(ticrypt_settings_t *settings) {
       }
       sprintf(add_feature,"%s",
                             config_setting_get_string_elem(features_opt, index));
-      (settings -> features)[index] = malloc(strlen(add_feature)*sizeof(char));
+      (settings -> features)[index] = malloc((1 + strlen(add_feature)) *
+                                      sizeof(char));
       sprintf((settings -> features)[index],
               "%s",
               config_setting_get_string_elem(features_opt, index));
@@ -455,7 +462,8 @@ extern int job_submit(struct job_descriptor *job_desc, uint32_t submit_uid,
       while ( ftoken != NULL ) {
         job_features = realloc(job_features,(n_job_features + 1)*sizeof(char*));
         sscanf(ftoken,"%s",feature);
-        job_features[n_job_features] = malloc(strlen(feature)*sizeof(char));
+        job_features[n_job_features] = malloc((1 + strlen(feature)) *
+                                       sizeof(char));
         sprintf(job_features[n_job_features],"%s",feature);
         n_job_features++;
         ftoken = strtok(NULL,",");

@@ -25,7 +25,7 @@ $(doc):
 	gzip doc/ticrypt-spank.8
 
 $(submit):	$(slurm)
-	gcc -DHAVE_CONFIG_H -Islurm/ -I/usr/include/slurm/ -g -O2 -pthread -fno-gcse -fPIC -Werror -Wall -g -O0 -fno-strict-aliasing -MT job_submit_ticrypt.lo -MD -MP -MF src/ticrypt_submit/.deps/job_submit_ticrypt.Tpo -c src/ticrypt_submit/job_submit_ticrypt.c -o src/ticrypt_submit/.libs/job_submit_ticrypt.o -lconfig
+	gcc -DHAVE_CONFIG_H -Islurm/ -I$(INC) -g -O2 -pthread -fno-gcse -fPIC -Werror -Wall -g -O0 -fno-strict-aliasing -MT job_submit_ticrypt.lo -MD -MP -MF src/ticrypt_submit/.deps/job_submit_ticrypt.Tpo -c src/ticrypt_submit/job_submit_ticrypt.c -o src/ticrypt_submit/.libs/job_submit_ticrypt.o -lconfig
 	mv -f src/ticrypt_submit/.deps/job_submit_ticrypt.Tpo src/ticrypt_submit/.deps/job_sumit_ticrypt.Plo
 	gcc -shared -fPIC -DPIC src/ticrypt_submit/.libs/job_submit_ticrypt.o -O2 -pthread -O0 -pthread -Wl,-soname -Wl,$(submit) -o $(submit) -lconfig
 
@@ -67,6 +67,6 @@ clean:
 	rm -f doc/ticrypt-spank.8* 
 	rm -f fake.txt
 	rm -rf src/ticrypt_submit/.libs/*
-	rm -rf slurm/
+	rm -rf slurm
 
 
