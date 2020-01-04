@@ -550,7 +550,8 @@ extern int job_submit(struct job_descriptor *job_desc, uint32_t submit_uid,
   job_desc -> min_nodes = set_max;
   job_desc -> max_nodes = set_max;
 
-
+  /* Set per node memory to 0 to use entire node worth */
+  job_desc -> pn_min_memory = 0;
 
   /* Cleanup and clean return */
   ticrypt_settings_free(&settings);

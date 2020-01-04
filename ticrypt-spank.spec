@@ -1,6 +1,6 @@
 Name:       ticrypt-spank	
-Version:    1.2
-Release:    4
+Version:    1.3
+Release:    1
 Summary:    Ticrypt spank plugin for Slurm
 
 License:    GPLv3	
@@ -49,6 +49,8 @@ rm -rf %{buildroot}
 %config(noreplace) /etc/ticrypt-spank.conf
 
 %changelog
+* Sat Jan 4 2020 William Howell <whowell@rc.ufl.edu> - 1.3-1
+- Project 1.3
 * Thu Jan 2 2020 William Howell <whowell@rc.ufl.edu> - 1.2-4
 - Fix duplicated spank plugin option registration
 * Wed Nov 27 2019 William Howell <whowell@rc.ufl.edu> - 1.2-3

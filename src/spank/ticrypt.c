@@ -806,13 +806,13 @@ int slurm_spank_task_exit(spank_t sp, int ac, char **av) {
   struct slurm_update_node_msg node_msg;
   slurm_init_update_node_msg(&node_msg);
   node_msg.node_names = slurm_hostname;
-  node_msg.node_state = NODE_RESUME;
+  node_msg.node_state = NODE_STATE_UNDRAIN;
   node_msg.reason_uid = 0;
   if ( slurm_update_node(&node_msg) != SLURM_SUCCESS ) {
     sprintf(message,
             "node resume failed with %s",
             slurm_strerror(errno));
-    tlog(message,ERROR);
+    tlog(message,INFO);
   }
  
   /* cleanup */

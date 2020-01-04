@@ -22,11 +22,11 @@ This SPANK plugin requires [libconfig](http://hyperrealm.github.io/libconfig/) w
 cp config/ticrypt-spank.conf
 ``` 
 
-* Clone the slurm submodule into the checked out repository and run the configure for Slurm
+* Clone the slurm submodule into the checked out repository and run the configure for Slurm. Note that the included Makefile will checkout the desired branch as shown later by passing SLURM_VERSION to make, so the checkout and configure below are not technically required but shown for reference. 
 
 ```
 cd ticrypt-spank/
-git submodule update --init
+git submodule add --force https://github.com/SchedMD/slurm.git slurm
 cd slurm
 checkout <desired slurm branch>
 ./configure
