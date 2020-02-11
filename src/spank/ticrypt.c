@@ -132,6 +132,11 @@ const char *spank_item_names[] = {
   "S_JOB_ARRAY_TASK_ID"     
 };
 
+/* ****************************************************** */
+/*                  getSpankContext()                     */
+/* - return string form of spank context                  */
+/* ****************************************************** */
+
 int getSpankContext(char *context) {
   spank_context_t sp_context = spank_context();
   if ( sp_context == S_CTX_ERROR ) {
@@ -154,6 +159,10 @@ int getSpankContext(char *context) {
   return PASS;
 }
 
+/* ****************************************************** */
+/*                        tlog()                          */
+/* - logging wrapper                                      */
+/* ****************************************************** */
 void tlog(char *message, int level) {
   char lmessage[BUFLEN];
   sprintf(lmessage,
@@ -166,6 +175,37 @@ void tlog(char *message, int level) {
   else if ( level >= 3 ) { slurm_debug(lmessage);   }
   return;
 }
+
+/* ****************************************************** */
+/*                   replace_job_id()                     */
+/* - optional variable substition in config commands      */
+/* ****************************************************** */
+const char *replace_job_id(const char *process, int job_id)
+{
+  static char buffer[BUFLEN];
+  char *index;
+  char *substitute="%JOBID%";
+
+  /* make a string copy of job id*/
+  char job_id_str[BUFLEN];
+  sprintf(job_id_str,"%d",job_id);
+
+  /* if not replacement, just return original */
+  if( ! (index = strstr(process, substitute)) ) {
+    return process;
+  }
+
+  /* parse out the substitution key */
+  strncpy(buffer, process, index-process);
+  buffer[index-process] = '\0';
+
+  sprintf(buffer+(index-process), "%s%s",
+          job_id_str, index + strlen(substitute));
+
+  /* return updated string */
+  return buffer;
+}
+
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -286,6 +326,7 @@ int ticrypt_settings_init(ticrypt_settings_t *settings,int job_id) {
     config_destroy(&config);
     return CONFAIL;
   }
+  convert_opt = replace_job_id(convert_opt, job_id);
   settings -> convert = 
               (char *) malloc((1 + strlen(convert_opt)) * sizeof(char));
   sprintf(settings -> convert,"%s",convert_opt);
@@ -297,6 +338,7 @@ int ticrypt_settings_init(ticrypt_settings_t *settings,int job_id) {
     config_destroy(&config);
     return CONFAIL;
   }
+  revert_opt = replace_job_id(revert_opt, job_id);
   settings -> revert = 
               (char *) malloc((1 + strlen(revert_opt)) * sizeof(char));
   sprintf(settings -> revert,"%s",revert_opt);

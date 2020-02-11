@@ -2,12 +2,12 @@
 #SBATCH --nodes=1
 #SBATCH --ticrypt
 #SBATCH --exclusive 
-#SBATCH --time=00:05:00
+#SBATCH --time=01:05:00
 
 echo "========================================"
 echo "Fake Activity for Job"
 echo "========================================"
 echo
 echo "Sleeping"
-sleep 290
+sleep 600
 
