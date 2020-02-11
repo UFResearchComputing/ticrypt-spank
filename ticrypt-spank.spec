@@ -1,5 +1,5 @@
 Name:       ticrypt-spank	
-Version:    1.3
+Version:    1.4
 Release:    1
 Summary:    Ticrypt spank plugin for Slurm
 
@@ -13,7 +13,7 @@ Requires:	slurm libconfig
 %description
 Provides Slurm Spank and submit plugins to allow node reconfiguration for scheduling Ticrypt VM Hosts.
 
-%{expand:%%define default_slurm_version slurm-19-05-4-1}
+%{expand:%%define default_slurm_version slurm-19-05-5-1}
 %{!?slurm_version: %define slurm_version %{default_slurm_version}}
 %{expand:%%define default_lib /opt/slurm/lib64/slurm}
 %{!?lib: %define lib %{default_lib}}
@@ -49,6 +49,8 @@ rm -rf %{buildroot}
 %config(noreplace) /etc/ticrypt-spank.conf
 
 %changelog
+* Tue Feb 11 2020 William Howell <whowell@rc.ufl.edu> - 1.4-1
+- Add jobid replacement to config argument processing
 * Sat Jan 4 2020 William Howell <whowell@rc.ufl.edu> - 1.3-1
 - Project 1.3
 * Thu Jan 2 2020 William Howell <whowell@rc.ufl.edu> - 1.2-4
